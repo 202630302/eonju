@@ -1,260 +1,703 @@
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오늘 먹을 저녁 메뉴 추천 🍽️</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+    <title>학생 맞춤 건강 식품 추천 및 식단 관리 시스템</title>
+    <!-- FontAwesome 아이콘 라이브러리 추가 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --danger-gradient: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         body {
-            font-family: 'Gowun Dodum', sans-serif;
-            background: linear-gradient(135deg, #fff5eb 0%, #ffe8d6 100%);
-            min-height: 100vh;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            padding: 2.5rem 1rem;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #4a3e3d;
+            min-height: 100vh;
         }
 
-        .card {
-            background-color: #ffffff;
-            border-radius: 28px;
-            box-shadow: 0 15px 35px rgba(218, 140, 100, 0.15), 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 40px 30px;
+        /* 글래스모피즘 메인 컨테이너 */
+        .container {
             width: 100%;
-            max-width: 450px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid #fff0e6;
+            max-width: 950px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            padding: 2.5rem;
+            animation: fadeIn 0.8s ease-in-out;
         }
 
-        .header-tag {
-            display: inline-block;
-            background-color: #ffe5d9;
-            color: #d9603b;
-            font-weight: bold;
-            font-size: 14px;
-            padding: 6px 16px;
-            border-radius: 20px;
-            margin-bottom: 12px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1.5rem;
         }
 
         h1 {
-            font-family: 'Jua', sans-serif;
-            font-size: 28px;
-            color: #332726;
-            margin-bottom: 25px;
-            word-break: keep-all;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #818cf8, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
 
-        .display-area {
-            background: linear-gradient(180deg, #fff9f5 0%, #fff0e6 100%);
-            border-radius: 20px;
-            padding: 35px 20px;
-            margin-bottom: 25px;
-            min-height: 220px;
+        p.subtitle {
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
+        /* 네온 스타일 탭 */
+        .tabs {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            border-bottom: 1px solid var(--glass-border);
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
             align-items: center;
-            border: 2px dashed #ffd8c4;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #ffffff;
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        /* 탭 콘텐츠 애니메이션 */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: tabFade 0.4s ease-out;
+        }
+
+        @keyframes tabFade {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Inputs & Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #ffffff;
+            outline: none;
             transition: all 0.3s ease;
         }
 
-        .emoji-box {
-            font-size: 80px;
-            line-height: 1;
-            margin-bottom: 15px;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.08));
+        input[type="text"]:focus, select:focus {
+            border-color: #818cf8;
+            box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);
+            background: rgba(15, 23, 42, 0.8);
         }
 
-        .menu-name {
-            font-family: 'Jua', sans-serif;
-            font-size: 26px;
-            color: #2c1810;
-            margin-bottom: 6px;
+        select option {
+            background-color: #0f172a;
+            color: #ffffff;
         }
 
-        .menu-category {
-            font-size: 14px;
-            color: #8c7a70;
-        }
-
-        .recommend-btn {
-            font-family: 'Jua', sans-serif;
-            width: 100%;
-            background: linear-gradient(135deg, #ff7b54 0%, #ff5200 100%);
+        /* 화려한 그라디언트 버튼 */
+        .btn {
+            background: var(--primary-gradient);
             color: white;
             border: none;
-            padding: 18px 24px;
-            font-size: 20px;
-            border-radius: 16px;
+            padding: 0.9rem 1.6rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 82, 0, 0.3);
-            transition: all 0.2s ease;
-            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .recommend-btn:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(255, 82, 0, 0.4);
-            background: linear-gradient(135deg, #ff8c66 0%, #ff631c 100%);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
         }
 
-        .recommend-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 4px 10px rgba(255, 82, 0, 0.2);
+        .btn:active {
+            transform: translateY(0);
         }
 
-        /* 슬롯머신 애니메이션 클래스 */
-        .slot-spinning {
-            animation: bounce 0.15s infinite alternate;
+        /* 그리드 및 네온 카드 디자인 */
+        .grid-cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .grid-cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+        .grid-cols-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+
+        @media (max-width: 768px) {
+            .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
         }
 
-        @keyframes bounce {
-            from { transform: translateY(-5px) scale(0.95); opacity: 0.8; }
-            to { transform: translateY(5px) scale(1.05); opacity: 1; }
+        .card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.2rem;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .pop-in {
-            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        @keyframes pop {
-            0% { transform: scale(0.3); opacity: 0; }
-            70% { transform: scale(1.15); }
-            100% { transform: scale(1); opacity: 1; }
+        .card.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border-color: rgba(16, 185, 129, 0.4);
         }
 
-        footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #b3a095;
+        .card.danger {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(225, 29, 72, 0.05) 100%);
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+
+        .card.info {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .card.warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-top: 0.4rem;
+        }
+
+        /* 라디오 버튼 맞춤 디자인 */
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .radio-label:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .radio-label input[type="radio"] {
+            accent-color: #818cf8;
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+
+        .feedback-item {
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            margin-top: 0.6rem;
+            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <span class="header-tag">오늘 뭐 먹지? 고민 해결!</span>
-        <h1>오늘 먹을 저녁 메뉴 추천</h1>
+<div class="container">
+    <header>
+        <h1><i class="fa-solid fa-graduation-cap"></i> 학생 맞춤 건강 관리 시스템</h1>
+        <p class="subtitle">학습 집중력 · 성장 체력 · 체질 영양 통합 케어 플랫폼</p>
+    </header>
 
-        <div class="display-area" id="displayArea">
-            <div class="emoji-box" id="emojiBox">🤔</div>
-            <div class="menu-name" id="menuName">버튼을 눌러보세요!</div>
-            <div class="menu-category" id="menuCategory">오늘 저녁 최고의 선택은?</div>
-        </div>
-
-        <button class="recommend-btn" id="recommendBtn" onclick="getMenuRecommendation()">
-            🍽️ 저녁 메뉴 추천
-        </button>
-
-        <footer>
-            오늘 저녁도 맛있게 드세요!
-        </footer>
+    <!-- 탭 메뉴 -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab1', this)"><i class="fa-solid fa-utensils"></i> 영양 조회</button>
+        <button class="tab-btn" onclick="switchTab('tab2', this)"><i class="fa-solid fa-bowl-food"></i> 이상적 식단</button>
+        <button class="tab-btn" onclick="switchTab('tab3', this)"><i class="fa-solid fa-dna"></i> 체질별 추천</button>
+        <button class="tab-btn" onclick="switchTab('tab4', this)"><i class="fa-solid fa-chart-pie"></i> 식단 평가</button>
+        <button class="tab-btn" onclick="switchTab('tab5', this)"><i class="fa-solid fa-magnifying-glass-chart"></i> 음식 궁합 검색</button>
     </div>
 
-    <script>
-        const menuList = [
-            // 한식
-            { name: "김치찌개", emoji: "🍲", category: "한식" },
-            { name: "삼겹살", emoji: "🥓", category: "한식" },
-            { name: "비빔밥", emoji: "🥣", category: "한식" },
-            { name: "치킨", emoji: "🍗", category: "야식 / 한식" },
-            { name: "족발/보쌈", emoji: "🍖", category: "한식" },
-            { name: "떡볶이", emoji: "🍢", category: "분식" },
-            { name: "불고기", emoji: "🥩", category: "한식" },
-            { name: "삼계탕", emoji: "🍲", category: "한식" },
-            { name: "국밥", emoji: "🥣", category: "한식" },
+    <!-- 1. 영양 조회 -->
+    <div id="tab1" class="tab-content active">
+        <h2><i class="fa-solid fa-apple-whole" style="color: #f43f5e;"></i> 음식 영양 성분 검색</h2>
+        <br>
+        <div class="form-group">
+            <label for="nutrient-search">조회하고 싶은 음식을 입력해보세요:</label>
+            <input type="text" id="nutrient-search" placeholder="예: 바나나, 사과, 라면, 닭고기..." oninput="searchNutrient()">
+        </div>
+        <div id="nutrient-result"></div>
+    </div>
 
-            // 일식
-            { name: "초밥 (스시)", emoji: "🍣", category: "일식" },
-            { name: "라멘", emoji: "🍜", category: "일식" },
-            { name: "돈가스", emoji: "🍱", category: "일식" },
-            { name: "우동", emoji: "🍲", category: "일식" },
-            { name: "타코야끼", emoji: "🐙", category: "일식 간식" },
+    <!-- 2. 이상적 식단 -->
+    <div id="tab2" class="tab-content">
+        <h2><i class="fa-solid fa-calendar-check" style="color: #3b82f6;"></i> 맞춤형 하루 추천 식단</h2>
+        <br>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="diet-type" value="study" checked onchange="renderIdealDiet()"> 🧠 수험생/학습형 (집중력)
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="diet-type" value="growth" onchange="renderIdealDiet()"> 💪 성장/운동형 (체력)
+            </label>
+        </div>
+        <div id="ideal-diet-result"></div>
+    </div>
 
-            // 중식
-            { name: "짜장면", emoji: "🍜", category: "중식" },
-            { name: "짬뽕", emoji: "🍜", category: "중식" },
-            { name: "마라탕", emoji: "🍲", category: "중식" },
-            { name: "탕수육", emoji: "🍤", category: "중식" },
-            { name: "딤섬", emoji: "🥟", category: "중식" },
+    <!-- 3. 체질별 추천 -->
+    <div id="tab3" class="tab-content">
+        <h2><i class="fa-solid fa-heart-pulse" style="color: #ec4899;"></i> 체질별 맞춤 솔루션</h2>
+        <br>
+        <div class="form-group">
+            <label for="body-type-select">당신의 체질을 선택하세요:</label>
+            <select id="body-type-select" onchange="renderBodyType()">
+                <option value="열성 체질">🔥 열성 체질</option>
+                <option value="냉성 체질">❄️ 냉성 체질</option>
+                <option value="소화약함 체질">🍃 소화약함 체질</option>
+                <option value="부종형 체질">💧 부종형 체질</option>
+                <option value="에너지부족형 체질">⚡ 만성피로/에너지부족형</option>
+            </select>
+        </div>
+        <div id="body-type-info" style="margin-bottom: 1.5rem;"></div>
+        <button class="btn" onclick="recommendFood()"><i class="fa-solid fa-shuffle"></i> 새로운 추천 음식 뽑기</button>
+        <div id="body-type-recs" style="margin-top: 1.5rem;"></div>
+    </div>
 
-            // 양식 & 기타
-            { name: "피자", emoji: "🍕", category: "양식" },
-            { name: "햄버거", emoji: "🍔", category: "패스트푸드" },
-            { name: "파스타", emoji: "🍝", category: "양식" },
-            { name: "스테이크", emoji: "🥩", category: "양식" },
-            { name: "타코", emoji: "🌮", category: "멕시칸" },
-            { name: "카레", emoji: "🍛", category: "아시안" },
-            { name: "쌀국수", emoji: "🍜", category: "베트남" },
-            { name: "샌드위치", emoji: "🥪", category: "간편식" }
-        ];
+    <!-- 4. 식단 평가 -->
+    <div id="tab4" class="tab-content">
+        <h2><i class="fa-solid fa-clipboard-check" style="color: #10b981;"></i> 오늘 먹은 식단 정밀 분석</h2>
+        <br>
+        <div class="form-group">
+            <label for="breakfast">아침 식단</label>
+            <input type="text" id="breakfast" placeholder="예: 사과, 우유, 계란">
+        </div>
+        <div class="form-group">
+            <label for="lunch">점심 식단</label>
+            <input type="text" id="lunch" placeholder="예: 떡볶이, 튀김, 콜라">
+        </div>
+        <div class="form-group">
+            <label for="dinner">저녁 식단</label>
+            <input type="text" id="dinner" placeholder="예: 닭가슴살, 샐러드">
+        </div>
+        <button class="btn" onclick="evaluateDiet()"><i class="fa-solid fa-calculator"></i> 식단 분석 및 점수 측정</button>
+        <div id="diet-result" style="margin-top: 1.5rem;"></div>
+    </div>
 
-        let isSpinning = false;
+    <!-- 5. 음식 궁합 -->
+    <div id="tab5" class="tab-content">
+        <h2><i class="fa-solid fa-handshake" style="color: #f59e0b;"></i> AI 음식 궁합 자유 검색</h2>
+        <p class="subtitle" style="margin-bottom: 1.5rem;">궁합이 궁금한 식품을 자유롭게 검색하여 최고/최악의 시너지 식품을 확인하세요.</p>
+        <div class="form-group">
+            <label for="combo-search">음식명을 입력하세요:</label>
+            <input type="text" id="combo-search" placeholder="예: 토마토, 시금치, 우유, 고구마, 계란..." oninput="searchCombo()">
+        </div>
+        <div id="combo-result"></div>
+    </div>
+</div>
 
-        function getMenuRecommendation() {
-            if (isSpinning) return;
-            
-            isSpinning = true;
-            const emojiBox = document.getElementById("emojiBox");
-            const menuName = document.getElementById("menuName");
-            const menuCategory = document.getElementById("menuCategory");
-            const btn = document.getElementById("recommendBtn");
+<script>
+    // --- 데이터베이스 ---
+    const FOOD_DB = {
+        "바나나": {"칼로리": 89, "탄수화물": 23, "단백질": 1.1, "지방": 0.3},
+        "오이": {"칼로리": 15, "탄수화물": 3.6, "단백질": 0.7, "지방": 0.1},
+        "수박": {"칼로리": 30, "탄수화물": 8, "단백질": 0.6, "지방": 0.2},
+        "토마토": {"칼로리": 18, "탄수화물": 3.9, "단백질": 0.9, "지방": 0.2},
+        "생강차": {"칼로리": 40, "탄수화물": 10, "단백질": 0.1, "지방": 0},
+        "닭고기": {"칼로리": 165, "탄수화물": 0, "단백질": 31, "지방": 3.6},
+        "단호박": {"칼로리": 66, "탄수화물": 17, "단백질": 1.7, "지방": 0.3},
+        "무": {"칼로리": 18, "탄수화물": 4.1, "단백질": 0.8, "지방": 0.1},
+        "매실": {"칼로리": 29, "탄수화물": 7, "단백질": 0.7, "지방": 0.2},
+        "계란": {"칼로리": 77, "탄수화물": 0.6, "단백질": 6.3, "지방": 5.3},
+        "현미밥": {"칼로리": 150, "탄수화물": 35, "단백질": 3, "지방": 1},
+        "쌀밥": {"칼로리": 300, "탄수화물": 65, "단백질": 6, "지방": 1},
+        "라면": {"칼로리": 500, "탄수화물": 80, "단백질": 10, "지방": 16},
+        "우유": {"칼로리": 130, "탄수화물": 10, "단백질": 7, "지방": 7},
+        "사과": {"칼로리": 52, "탄수화물": 14, "단백질": 0.3, "지방": 0.2},
+        "샐러드": {"칼로리": 45, "탄수화물": 8, "단백질": 2, "지방": 0.5},
+        "떡볶이": {"칼로리": 300, "탄수화물": 60, "단백질": 6, "지방": 4},
+        "견과류": {"칼로리": 180, "탄수화물": 6, "단백질": 5, "지방": 16},
+        "시금치": {"칼로리": 23, "탄수화물": 3.6, "단백질": 2.9, "지방": 0.4},
+        "두부": {"칼로리": 84, "탄수화물": 1.9, "단백질": 8.9, "지방": 4.8},
+        "고구마": {"칼로리": 128, "탄수화물": 30, "단백질": 1.4, "지방": 0.2},
+        "돼지고기": {"칼로리": 242, "탄수화물": 0, "단백질": 27, "지방": 14},
+        "소고기": {"칼로리": 250, "탄수화물": 0, "단백질": 26, "지방": 15}
+    };
 
-            btn.disabled = true;
-            btn.style.opacity = "0.8";
-
-            // 슬롯머신 효과 (0.8초 동안 여러 메뉴 랜덤으로 빠르게 변경)
-            emojiBox.classList.remove("pop-in");
-            emojiBox.classList.add("slot-spinning");
-            
-            let counter = 0;
-            const interval = setInterval(() => {
-                const tempIndex = Math.floor(Math.random() * menuList.length);
-                emojiBox.textContent = menuList[tempIndex].emoji;
-                menuName.textContent = menuList[tempIndex].name;
-                menuCategory.textContent = "추천 메뉴 찾는 중...";
-                counter++;
-            }, 70);
-
-            // 최종 메뉴 결정 및 연출
-            setTimeout(() => {
-                clearInterval(interval);
-                
-                const finalIndex = Math.floor(Math.random() * menuList.length);
-                const selectedMenu = menuList[finalIndex];
-
-                emojiBox.classList.remove("slot-spinning");
-                emojiBox.classList.add("pop-in");
-
-                emojiBox.textContent = selectedMenu.emoji;
-                menuName.textContent = selectedMenu.name;
-                menuCategory.textContent = `[${selectedMenu.category}] 오늘의 추천!`;
-
-                btn.disabled = false;
-                btn.style.opacity = "1";
-                isSpinning = false;
-            }, 1000);
+    const BODY_TYPES = {
+        "열성 체질": {
+            "설명": "몸에 열이 많고 답답함을 느끼기 쉬우며 성격이 급한 편인 체질",
+            "추천": ["오이", "수박", "토마토", "바나나", "메밀국수", "참외", "배", "녹두죽"],
+            "비추천": ["매운 음식", "홍삼", "닭고기", "튀김류"]
+        },
+        "냉성 체질": {
+            "설명": "손발과 아랫배가 차고 소화 기관이 차가운 체질",
+            "추천": ["생강차", "닭고기", "단호박", "부추", "삼계탕", "대추차", "소고기", "당근"],
+            "비추천": ["아이스크림", "차가운 음료", "참외", "돼지고기"]
+        },
+        "소화약함 체질": {
+            "설명": "적은 양에도 배가 부르고 속이 더부룩하며 체하기 쉬운 체질",
+            "추천": ["무", "매실", "단호박죽", "삶은계란", "바나나", "양배추", "사과", "두부"],
+            "비추천": ["인스턴트", "탄산음료", "밀가루 음식", "기름진 음식"]
+        },
+        "부종형 체질": {
+            "설명": "몸이 잘 붓고 수분 배출이 원활하지 않아 무게감이 드는 체질",
+            "추천": ["팥차", "호박", "옥수수수염차", "바나나", "시금치", "해조류", "토마토"],
+            "비추천": ["짜게 먹는 음식", "라면", "가공육", "야식"]
+        },
+        "에너지부족형 체질": {
+            "설명": "쉽게 피로를 느끼고 아침에 일어나기 힘든 만성 피로 체질",
+            "추천": ["현미밥", "견과류", "소고기", "전복", "브로콜리", "계란", "블루베리"],
+            "비추천": ["단당류 음료", "카페인 오남용", "패스트푸드"]
         }
-    </script>
+    };
+
+    const FOOD_COMBOS = {
+        "토마토": { "Good": ["올리브유", "지용성 비타민 라이코펜의 체내 흡수율이 크게 높아집니다."], "Bad": ["설탕", "설탕을 치면 토마토 속 비타민 B1이 모두 파괴됩니다."] },
+        "시금치": { "Good": ["참깨", "시금치의 결석 유발 물질을 막아주고 필수 아미노산을 보충합니다."], "Bad": ["두부", "시금치의 옥살산과 두부의 칼슘이 결합해 결석(돌)을 유발할 수 있습니다."] },
+        "우유": { "Good": ["바나나", "칼슘 흡수를 높이고 속을 편안하게 해줍니다."], "Bad": ["초콜릿", "우유와 초콜릿 모두 유지방이 높아 혈중 콜레스테롤이 상승합니다."] },
+        "소고기": { "Good": ["깻잎", "소고기에 부족한 비타민 A/C와 식이섬유를 완벽 보충합니다."], "Bad": ["부추", "둘 다 따뜻한 성질이라 몸에 열이 오르고 위장에 부담을 줍니다."] },
+        "돼지고기": { "Good": ["새우젓", "새우젓의 지방 분해 효소(리파아제)가 소화를 돕습니다."], "Bad": ["도라지", "도라지의 효능을 떨어뜨리고 소화 장애를 유발할 수 있습니다."] },
+        "계란": { "Good": ["토마토", "달걀에 부족한 비타민 C와 식이섬유를 토마토가 완벽히 채워줍니다."], "Bad": ["녹차", "녹차의 탄닌 성분이 달걀의 단백질 흡수를 방해합니다."] },
+        "바나나": { "Good": ["귀리(오트밀)", "식이섬유가 풍부해 포만감을 지속시키고 장 건강에 좋습니다."], "Bad": ["고구마", "둘 다 소화 속도가 달라 위장에 가스가 차고 더부룩해질 수 있습니다."] },
+        "고구마": { "Good": ["김치", "김치의 젖산균이 고구마의 소화를 돕고 나트륨 배출을 촉진합니다."], "Bad": ["바나나", "위산 분비를 자극해 속쓰림이나 더부룩함을 유발합니다."] },
+        "닭고기": { "Good": ["인삼/황기", "몸의 기운을 돋우고 영양 보충 효과를 극대화합니다."], "Bad": ["자두", "닭고기와 자두는 모두 성질이 강해 소화기 장애를 일으킬 수 있습니다."] }
+    };
+
+    // --- 탭 전환 ---
+    function switchTab(tabId, element) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        element.classList.add('active');
+    }
+
+    // --- 1. 영양 조회 ---
+    function searchNutrient() {
+        const query = document.getElementById('nutrient-search').value.trim();
+        const resultDiv = document.getElementById('nutrient-result');
+
+        if (!query) {
+            resultDiv.innerHTML = '';
+            return;
+        }
+
+        let key = Object.keys(FOOD_DB).find(k => k.includes(query) || query.includes(k));
+
+        if (key) {
+            const data = FOOD_DB[key];
+            resultDiv.innerHTML = `
+                <div class="card success" style="margin-bottom: 1rem;">
+                    ✨ <strong>'${key}'</strong> 영양 데이터 검색 완료
+                </div>
+                <div class="grid-cols-4">
+                    <div class="card"><div class="metric-title">🔥 칼로리</div><div class="metric-value">${data.칼로리} <small style="font-size:0.9rem">kcal</small></div></div>
+                    <div class="card"><div class="metric-title">🌾 탄수화물</div><div class="metric-value">${data.탄수화물} <small style="font-size:0.9rem">g</small></div></div>
+                    <div class="card"><div class="metric-title">🥩 단백질</div><div class="metric-value">${data.단백질} <small style="font-size:0.9rem">g</small></div></div>
+                    <div class="card"><div class="metric-title">🥑 지방</div><div class="metric-value">${data.지방} <small style="font-size:0.9rem">g</small></div></div>
+                </div>
+            `;
+        } else {
+            resultDiv.innerHTML = `
+                <div class="card warning">
+                    ⚠️ '${query}'에 대한 정확한 데이터를 찾지 못했습니다.<br>
+                    💡 <strong>추천 검색어:</strong> '바나나', '사과', '계란', '토마토', '라면', '닭고기'
+                </div>
+            `;
+        }
+    }
+
+    // --- 2. 이상적 식단 ---
+    function renderIdealDiet() {
+        const type = document.querySelector('input[name="diet-type"]:checked').value;
+        const container = document.getElementById('ideal-diet-result');
+
+        if (type === 'study') {
+            container.innerHTML = `
+                <div class="grid-cols-3">
+                    <div class="card info">
+                        <h3 style="color:#818cf8; margin-bottom:0.5rem;"><i class="fa-solid fa-sun"></i> 아침</h3>
+                        <p style="font-size:1.05rem; font-weight:600;">현미밥, 계란말이, 견과류 1봉</p>
+                        <br>
+                        <small style="color:var(--text-sub);">💡 복합 탄수화물로 뇌 에너지를 지속 공급합니다.</small>
+                    </div>
+                    <div class="card success">
+                        <h3 style="color:#34d399; margin-bottom:0.5rem;"><i class="fa-solid fa-cloud-sun"></i> 점심</h3>
+                        <p style="font-size:1.05rem; font-weight:600;">급식 정상 섭취 + 야채 위주</p>
+                        <br>
+                        <small style="color:var(--text-sub);">💡 오후 식곤증 예방을 위해 과식을 피합니다.</small>
+                    </div>
+                    <div class="card warning">
+                        <h3 style="color:#fbbf24; margin-bottom:0.5rem;"><i class="fa-solid fa-moon"></i> 저녁</h3>
+                        <p style="font-size:1.05rem; font-weight:600;">닭가슴살 샐러드, 바나나</p>
+                        <br>
+                        <small style="color:var(--text-sub);">💡 위장을 편안하게 유지하여 학습 집중을 돕습니다.</small>
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="grid-cols-3">
+                    <div class="card info">
+                        <h3 style="color:#818cf8; margin-bottom:0.5rem;"><i class="fa-solid fa-sun"></i> 아침</h3>
+                        <p style="font-size:1.05rem; font-weight:600;">사과 1개, 우유 1컵, 삶은계란 2개</p>
+                        <br>
+                        <small style="color:var(--text-sub);">💡 풍부한 단백질로 신체 활력을 깨웁니다.</small>
+                    </div>
+                    <div class="card success">
+                        <h3 style="color:#34d399; margin-bottom:0.5rem;"><i class="fa-solid fa-cloud-sun"></i> 점심</h3>
+                        <p style="font-size:1.05rem; font-weight:600;">급식 (육류 및 주요 반찬 골고루)</p>
+                        <br>
+                        <small style="color:var(--text-sub);">💡 성장에 필요한 다양한 영양소를 섭취합니다.</small>
+                    </div>
+                    <div class="card warning">
+                        <h3 style="color:#fbbf24; margin-bottom:0.5rem;"><i class="fa-solid fa-moon"></i> 저녁</h3>
+                        <p style="font-size:1.05rem; font-weight:600;">잡곡밥, 불고기, 된장찌개</p>
+                        <br>
+                        <small style="color:var(--text-sub);">💡 근육 합성 및 성장호르몬 분비를 촉진합니다.</small>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // --- 3. 체질별 추천 ---
+    function renderBodyType() {
+        const type = document.getElementById('body-type-select').value;
+        const data = BODY_TYPES[type];
+        const infoDiv = document.getElementById('body-type-info');
+
+        infoDiv.innerHTML = `
+            <div class="card info">
+                <p style="font-size:1.05rem; margin-bottom:0.4rem;"><strong>💡 체질 특징:</strong> ${data.설명}</p>
+                <p style="color:#f43f5e;"><strong>❌ 주의할 식품:</strong> ${data.비추천.join(', ')}</p>
+            </div>
+        `;
+        recommendFood();
+    }
+
+    function recommendFood() {
+        const type = document.getElementById('body-type-select').value;
+        const list = BODY_TYPES[type].추천;
+        const shuffled = [...list].sort(() => 0.5 - Math.random());
+        const picked = shuffled.slice(0, 2);
+
+        document.getElementById('body-type-recs').innerHTML = `
+            <div class="card success">
+                <h3 style="color:#34d399; margin-bottom:0.5rem;"><i class="fa-solid fa-circle-check"></i> 오늘 이 체질에 딱 맞는 음식</h3>
+                <p style="font-size:1.2rem; font-weight:700;">✨ ${picked[0]}, ${picked[1]}</p>
+            </div>
+        `;
+    }
+
+    // --- 4. 식단 평가 ---
+    function evaluateDiet() {
+        const b = document.getElementById('breakfast').value;
+        const l = document.getElementById('lunch').value;
+        const d = document.getElementById('dinner').value;
+        const allText = `${b} ${l} ${d}`;
+
+        let score = 100;
+        let praise = [];
+        let feedback = [];
+
+        if (!b || ['없음', '안먹음', 'x', 'X'].includes(b.trim())) {
+            score -= 15;
+            feedback.push("⚠️ <strong>아침 공복:</strong> 아침을 거르면 뇌 활성화 에너지가 부족해집니다.");
+        } else {
+            praise.push("✅ <strong>아침 식사 섭취:</strong> 아침을 챙겨 먹어 두뇌에 영양을 공급했습니다.");
+        }
+
+        const proteinKws = ["계란", "달걀", "닭", "고기", "두부", "우유", "생선"];
+        if (!proteinKws.some(kw => allText.includes(kw))) {
+            score -= 20;
+            feedback.push("⚠️ <strong>단백질 부족:</strong> 근육 및 성장 완성을 위해 단백질을 보충하세요.");
+        } else {
+            praise.push("✅ <strong>단백질 섭취:</strong> 질 좋은 단백질 식품이 포함되어 있습니다.");
+        }
+
+        const junkKws = ["라면", "떡볶이", "튀김", "치킨", "피자", "콜라", "과자"];
+        let junkCount = 0;
+        junkKws.forEach(kw => { if (allText.includes(kw)) junkCount++; });
+
+        if (junkCount >= 2) {
+            score -= 25;
+            feedback.push("⚠️ <strong>인스턴트 주의:</strong> 자극적인 음식 비율이 높아 피로감이 늘 수 있습니다.");
+        }
+
+        score = Math.max(score, 0);
+
+        let html = `
+            <div class="card info" style="margin-bottom:1rem; text-align:center;">
+                <div class="metric-title">📊 오늘 식단 밸런스 점수</div>
+                <div class="metric-value" style="font-size:2.5rem; color:#818cf8;">${score} <small style="font-size:1.2rem">점</small></div>
+            </div>
+        `;
+
+        if (praise.length > 0) {
+            html += `<h4 style="margin-top:1rem; color:#34d399;">🌟 훌륭한 점</h4>`;
+            praise.forEach(p => html += `<div class="feedback-item">${p}</div>`);
+        }
+
+        if (feedback.length > 0) {
+            html += `<h4 style="margin-top:1rem; color:#f43f5e;">🎯 개선 방향</h4>`;
+            feedback.forEach(f => html += `<div class="feedback-item">${f}</div>`);
+        }
+
+        document.getElementById('diet-result').innerHTML = html;
+    }
+
+    // --- 5. 음식 궁합 ---
+    function searchCombo() {
+        const query = document.getElementById('combo-search').value.trim();
+        const resultDiv = document.getElementById('combo-result');
+
+        if (!query) {
+            resultDiv.innerHTML = '';
+            return;
+        }
+
+        let key = Object.keys(FOOD_COMBOS).find(k => k.includes(query) || query.includes(k));
+
+        if (key) {
+            const data = FOOD_COMBOS[key];
+            resultDiv.innerHTML = `
+                <div class="grid-cols-2">
+                    <div class="card success">
+                        <h3 style="color:#34d399; margin-bottom:0.8rem;"><i class="fa-solid fa-thumbs-up"></i> [${key}] 최고 궁합</h3>
+                        <p style="font-weight:700; font-size:1.1rem; margin-bottom:0.4rem;">🤝 ${data.Good[0]}</p>
+                        <p style="font-size:0.9rem; color:var(--text-sub);">👉 ${data.Good[1]}</p>
+                    </div>
+                    <div class="card danger">
+                        <h3 style="color:#f43f5e; margin-bottom:0.8rem;"><i class="fa-solid fa-thumbs-down"></i> [${key}] 최악 궁합</h3>
+                        <p style="font-weight:700; font-size:1.1rem; margin-bottom:0.4rem;">⚠️ ${data.Bad[0]}</p>
+                        <p style="font-size:0.9rem; color:var(--text-sub);">👉 ${data.Bad[1]}</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            resultDiv.innerHTML = `
+                <div class="card warning" style="margin-bottom:1rem;">
+                    💡 <strong>'${query}'</strong> 일반 건강 가이드
+                </div>
+                <div class="grid-cols-2">
+                    <div class="card info">
+                        <h3 style="color:#818cf8;">⭕ 추천 조합: 신선한 야채류 & 올리브유</h3>
+                        <p style="margin-top:0.5rem; font-size:0.9rem; color:var(--text-sub);">비타민C가 풍부한 채소와 함께 섭취하면 항산화 작용과 영양 흡수율이 증대됩니다.</p>
+                    </div>
+                    <div class="card danger">
+                        <h3 style="color:#f43f5e;">❌ 비추천 조합: 정제당, 탄산음료</h3>
+                        <p style="margin-top:0.5rem; font-size:0.9rem; color:var(--text-sub);">설탕이나 가공 음료와 함께 섭취하면 주요 영양소가 결합 손실될 수 있습니다.</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // 초기화
+    window.onload = function() {
+        renderIdealDiet();
+        renderBodyType();
+    };
+</script>
+
 </body>
 </html>
-"""
-
-with open("dinner_menu_recommendation.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-print("HTML file created successfully.")
